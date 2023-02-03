@@ -2,10 +2,10 @@ import { Client } from "pg";
 
 const client: Client = new Client({
   user: "postgres",
-  password: "8073",
+  password: "1234",
   host: "localhost",
   database: "db_moveis",
-  port: 5432,
+  port: 5432
 });
 
 const startDataBase = async (): Promise<void> => {

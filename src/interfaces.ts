@@ -1,0 +1,16 @@
+import { QueryResult } from "pg";
+
+interface iMovie {
+  name: string;
+  description: string;
+  duration: number;
+  price: number;
+}
+
+// interface iMovieId extends iMovie{
+//   id: number;
+// }
+
+type iListMovies = QueryResult<iMovie>
+
+export { iMovie, iListMovies };
