@@ -3,25 +3,14 @@ import { QueryConfig } from "pg";
 import { client } from "./database";
 import { iListMovies, iMovie } from "./interfaces";
 
-const listMovies = async (req: Request, resp: Response): Promise<Response> => {
-  const queryString: string = `
-    select
-        *
-    from
-        todos;
-    `;
-
-  const queryResult: iListMovies = await client.query(queryString);
-
-  return resp.status(200).json(queryResult.rows);
-};
-
-const createMovie = async (
-  req: Request,
-  resp: Response
-): Promise<Response> => {
+const createMovie = async (req: Request, resp: Response): Promise<Response> => {
   const newMovie: iMovie = req.body;
- 
+
+  // const verifyExist;
+  // if(verifyExist){
+  //   return resp.status(409).json({message: "Esse filme já existe!"})
+  // }
+
   const queryString: string = `
   insert into
   todos(name, description, duration, price)
@@ -40,4 +29,59 @@ const createMovie = async (
   return resp.status(201).json(queryResult.rows[0]);
 };
 
-export { listMovies, createMovie };
+const listMovies = async (req: Request, resp: Response): Promise<Response> => {
+  const queryString: string = `
+    select
+        *
+    from
+        todos;
+    `;
+
+  const queryResult: iListMovies = await client.query(queryString);
+
+  return resp.status(200).json(queryResult.rows);
+};
+
+const updateMovie = async (req: Request, resp: Response): Promise<Response> => {
+  const newMovie: iMovie = req.body;
+  const idMovie: string = req.params.id;
+  const valuesMovie = Object.values(newMovie);
+
+  const queryString: string = `
+    update todos set
+    name = $1,
+    description = $2,
+    duration = $3,
+    price = $4
+    where 
+    id = $5
+    returning*;
+  `;
+
+  const queryConfig: QueryConfig = {
+    text: queryString,
+    values: [...valuesMovie, idMovie],
+  };
+
+  const queryResult: iListMovies = await client.query(queryConfig);
+
+  return resp.status(200).json(queryResult.rows[0]);
+};
+
+const deleteMovie = async (req: Request, resp: Response): Promise<Response> => {
+  const idMovie: string = req.params.id;
+  const queryString = `
+    delete from todos
+    where id = $1
+  `;
+
+  const queryConfig: QueryConfig = {
+    text: queryString,
+    values: [idMovie],
+  };
+  
+  await client.query(queryConfig);
+  return resp.status(204).send();
+};
+
+export { listMovies, createMovie, updateMovie, deleteMovie };
