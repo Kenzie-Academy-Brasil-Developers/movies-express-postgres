@@ -5,7 +5,7 @@ const client: Client = new Client({
   password: "1234",
   host: "localhost",
   database: "db_moveis",
-  port: 5432
+  port: 5432,
 });
 
 const startDataBase = async (): Promise<void> => {

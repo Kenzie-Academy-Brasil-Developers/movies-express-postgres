@@ -12,11 +12,11 @@ const createMovie = async (req: Request, resp: Response): Promise<Response> => {
   // }
 
   const queryString: string = `
-  insert into
-  todos(name, description, duration, price)
-  values
-  ($1, $2, $3, $4)
-  returning *;
+    insert into
+    todos(name, description, duration, price)
+    values
+    ($1, $2, $3, $4)
+    returning *;
   `;
 
   const queryConfig: QueryConfig = {
@@ -30,14 +30,23 @@ const createMovie = async (req: Request, resp: Response): Promise<Response> => {
 };
 
 const listMovies = async (req: Request, resp: Response): Promise<Response> => {
+  let page = req.query.page === undefined ? 0 : req.query.page;
+  const per_page = req.query.per_page === undefined ? 0 : req.query.per_page;
+
   const queryString: string = `
     select
         *
     from
-        todos;
+        todos
+        limit $1 offset $2;
     `;
 
-  const queryResult: iListMovies = await client.query(queryString);
+  const queryConfig: QueryConfig = {
+    text: queryString,
+    values: [per_page, page],
+  };
+
+  const queryResult: iListMovies = await client.query(queryConfig);
 
   return resp.status(200).json(queryResult.rows);
 };
@@ -79,7 +88,7 @@ const deleteMovie = async (req: Request, resp: Response): Promise<Response> => {
     text: queryString,
     values: [idMovie],
   };
-  
+
   await client.query(queryConfig);
   return resp.status(204).send();
 };

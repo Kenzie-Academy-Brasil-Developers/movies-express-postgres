@@ -7,10 +7,10 @@ interface iMovie {
   price: number;
 }
 
-// interface iMovieId extends iMovie{
-//   id: number;
-// }
+interface iMovieId extends iMovie {
+  id: string;
+}
 
-type iListMovies = QueryResult<iMovie>
+type iListMovies = QueryResult<iMovie>;
 
-export { iMovie, iListMovies };
+export { iMovie, iListMovies, iMovieId };
