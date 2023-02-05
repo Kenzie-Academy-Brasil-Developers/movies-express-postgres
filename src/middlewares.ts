@@ -46,12 +46,14 @@ const ensureMovieIdExist = async (
   resp: Response,
   next: NextFunction
 ) => {
+  const idMovie: number = parseInt(req.params.id);
+
   const queryString = await client.query(
     `
       select * from movies 
       where movies.id = $1;
       `,
-    [req.params.id]
+    [idMovie]
   );
 
   if (!queryString.rows[0]) {

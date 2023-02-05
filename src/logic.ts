@@ -48,7 +48,7 @@ const listMovies = async (req: Request, resp: Response): Promise<Response> => {
 
 const updateMovie = async (req: Request, resp: Response): Promise<Response> => {
   const newMovie: iMovie = req.body;
-  const idMovie: string = req.params.id;
+  const idMovie: number = parseInt(req.params.id);
   const valuesMovie = Object.values(newMovie);
 
   const queryString: string = `
@@ -73,7 +73,7 @@ const updateMovie = async (req: Request, resp: Response): Promise<Response> => {
 };
 
 const deleteMovie = async (req: Request, resp: Response): Promise<Response> => {
-  const idMovie: string = req.params.id;
+  const idMovie: number = parseInt(req.params.id);
   const queryString = `
     delete from movies
     where id = $1

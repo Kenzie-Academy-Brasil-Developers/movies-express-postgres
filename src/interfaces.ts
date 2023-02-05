@@ -8,7 +8,7 @@ interface iMovie {
 }
 
 interface iMovieId extends iMovie {
-  id: string;
+  id: number;
 }
 
 type iListMovies = QueryResult<iMovie>;
