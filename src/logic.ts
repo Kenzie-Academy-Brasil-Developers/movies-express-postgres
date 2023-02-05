@@ -6,14 +6,9 @@ import { iListMovies, iMovie } from "./interfaces";
 const createMovie = async (req: Request, resp: Response): Promise<Response> => {
   const newMovie: iMovie = req.body;
 
-  // const verifyExist;
-  // if(verifyExist){
-  //   return resp.status(409).json({message: "Esse filme já existe!"})
-  // }
-
   const queryString: string = `
     insert into
-    todos(name, description, duration, price)
+    movies(name, description, duration, price)
     values
     ($1, $2, $3, $4)
     returning *;
@@ -37,7 +32,7 @@ const listMovies = async (req: Request, resp: Response): Promise<Response> => {
     select
         *
     from
-        todos
+        movies
         limit $1 offset $2;
     `;
 
@@ -57,7 +52,7 @@ const updateMovie = async (req: Request, resp: Response): Promise<Response> => {
   const valuesMovie = Object.values(newMovie);
 
   const queryString: string = `
-    update todos set
+    update movies set
     name = $1,
     description = $2,
     duration = $3,
@@ -80,7 +75,7 @@ const updateMovie = async (req: Request, resp: Response): Promise<Response> => {
 const deleteMovie = async (req: Request, resp: Response): Promise<Response> => {
   const idMovie: string = req.params.id;
   const queryString = `
-    delete from todos
+    delete from movies
     where id = $1
   `;
 

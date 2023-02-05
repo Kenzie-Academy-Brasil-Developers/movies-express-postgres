@@ -8,8 +8,8 @@ const validateBody = async (
 ) => {
   const queryString = await client.query(
     `
-      select * from todos 
-      where todos = $1;
+      select * from movies 
+      where movies = $1;
       `,
     [req.body.name]
   );
@@ -28,8 +28,8 @@ const ensureMovieNameExist = async (
 ) => {
   const queryString = await client.query(
     `
-    select * from todos 
-    where todos.name = $1;
+    select * from movies 
+    where movies.name = $1;
     `,
     [req.body.name]
   );
@@ -48,8 +48,8 @@ const ensureMovieIdExist = async (
 ) => {
   const queryString = await client.query(
     `
-      select * from todos 
-      where todos.id = $1;
+      select * from movies 
+      where movies.id = $1;
       `,
     [req.params.id]
   );
