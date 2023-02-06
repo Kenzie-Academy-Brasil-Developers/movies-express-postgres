@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { format } from "path";
 import { QueryConfig } from "pg";
 import { client } from "./database";
 import { iListMovies, iMovie } from "./interfaces";
@@ -25,25 +26,49 @@ const createMovie = async (req: Request, resp: Response): Promise<Response> => {
 };
 
 const listMovies = async (req: Request, resp: Response): Promise<Response> => {
-  let page = req.query.page === undefined ? 0 : req.query.page;
-  const per_page = req.query.per_page === undefined ? 0 : req.query.per_page;
+  let page = Number(req.query.page) || 1;
+  let perPage = Number(req.query.per_page) || 5;
+
+  if (
+    (page <= 0 || typeof page !== "number") &&
+    (perPage < 0 || page > 5 || typeof perPage !== "number")
+  ) {
+    page = 1;
+    perPage = 5;
+  }
 
   const queryString: string = `
-    select
-        *
-    from
-        movies
-        limit $1 offset $2;
+     SELECT * FROM movies
+     OFFSET $1 LIMIT $2;
     `;
 
   const queryConfig: QueryConfig = {
     text: queryString,
-    values: [per_page, page],
+    values: [perPage * (page - 1), perPage],
   };
 
-  const queryResult: iListMovies = await client.query(queryConfig);
+  const baseUrl: string = "http://localhost:3000/movies";
+  let prevPage: any = `${baseUrl}?page=${page - 1}&perPage=${perPage}`;
+  let nextPage: any = `${baseUrl}?page=${page + 1}&perPage=${perPage}`;
 
-  return resp.status(200).json(queryResult.rows);
+  if (page === 1) {
+    prevPage = null;
+  }
+
+  const queryResult: iListMovies = await client.query(queryConfig);
+  const data = queryResult.rows;
+
+  if (data.length <= 0) {
+    nextPage = null;
+  }
+
+  const pagination: any = {
+    prevPage,
+    nextPage,
+    data: queryResult.rows,
+  };
+
+  return resp.status(200).json(pagination);
 };
 
 const updateMovie = async (req: Request, resp: Response): Promise<Response> => {
