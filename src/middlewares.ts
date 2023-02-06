@@ -1,24 +1,32 @@
 import { NextFunction, Request, Response } from "express";
 import { client } from "./database";
+import { irequeridKeys } from "./interfaces";
 
 const validateBody = async (
   req: Request,
   resp: Response,
   next: NextFunction
 ) => {
-  const queryString = await client.query(
-    `
-      select * from movies 
-      where movies = $1;
-      `,
-    [req.body.name]
+  const keys: Array<string> = Object.keys(req.body);
+
+  const requiredKeys: Array<irequeridKeys> = [
+    "name",
+    "description",
+    "duration",
+    "price",
+  ];
+
+  let validatedKeys: boolean = requiredKeys.every((key: string) =>
+    keys.includes(key)
   );
 
-  if (queryString.rows[0] !== undefined) {
-    return resp.status(409).json({ message: "Esse filme já existe!" });
+  if (!validatedKeys) {
+    return resp
+      .status(400)
+      .json({ message: `Required fields are:${requiredKeys}` });
   }
 
-  next();
+  return next();
 };
 
 const ensureMovieNameExist = async (
@@ -26,19 +34,23 @@ const ensureMovieNameExist = async (
   resp: Response,
   next: NextFunction
 ) => {
-  const queryString = await client.query(
-    `
+  try {
+    const queryString = await client.query(
+      `
     select * from movies 
     where movies.name = $1;
     `,
-    [req.body.name]
-  );
+      [req.body.name]
+    );
 
-  if (queryString.rows[0] !== undefined) {
-    return resp.status(409).json({ message: "Movie already exists." });
+    if (queryString.rows[0] !== undefined) {
+      return resp.status(409).json({ message: "Movie already exists." });
+    }
+  } catch (error) {
+    console.log(error);
   }
 
-  next();
+  return next();
 };
 
 const ensureMovieIdExist = async (
@@ -60,7 +72,7 @@ const ensureMovieIdExist = async (
     return resp.status(404).json({ message: "Movie not found." });
   }
 
-  next();
+  return next();
 };
 
-export { ensureMovieNameExist, ensureMovieIdExist };
+export { ensureMovieNameExist, ensureMovieIdExist, validateBody };

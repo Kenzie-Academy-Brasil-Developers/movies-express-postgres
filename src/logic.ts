@@ -5,7 +5,7 @@ import { iListMovies, iMovie } from "./interfaces";
 
 const createMovie = async (req: Request, resp: Response): Promise<Response> => {
   const newMovie: iMovie = req.body;
-
+ 
   const queryString: string = `
     insert into
     movies(name, description, duration, price)
