@@ -1,16 +1,16 @@
-create database db_movies;
+CREATE DATABASE db_movies;
 
-create table if not exists movies (
-id bigserial primary key,
-name varchar(50) unique not null,
-description text not null,
-duration int not null,
-price int not null
+CREATE TABLE if NOT EXISTS movies (
+id BIGSERIAL PRIMARY KEY,
+name VARCHAR(50) UNIQUE NOT NULL,
+description TEXT NOT NULL,
+duration INT NOT NULL,
+price INT NOT NULL
 )
 
-select * from movies
+SELECT * FROM movies
 
-insert into
+INSERT INTO
 movies(name, description, duration, price)
-values
+VALUES
 ('O Rei Leão', 'Infantil', 90, 60)

@@ -2,7 +2,11 @@ import express, { Application } from "express";
 
 import { startDataBase } from "./database";
 import { createMovie, deleteMovie, listMovies, updateMovie } from "./logic";
-import { ensureMovieIdExist, ensureMovieNameExist, validateBody } from "./middlewares";
+import {
+  ensureMovieIdExist,
+  ensureMovieNameExist,
+  validateBody,
+} from "./middlewares";
 
 const app: Application = express();
 app.use(express.json());

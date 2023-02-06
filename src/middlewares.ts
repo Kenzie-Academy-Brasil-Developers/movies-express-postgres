@@ -35,15 +35,16 @@ const ensureMovieNameExist = async (
   next: NextFunction
 ) => {
   try {
-    const queryString = await client.query(
+    const nameMovie: string = req.body.name;
+    const queryResult = await client.query(
       `
     select * from movies 
     where movies.name = $1;
     `,
-      [req.body.name]
+      [nameMovie]
     );
 
-    if (queryString.rows[0] !== undefined) {
+    if (queryResult.rows[0] !== undefined) {
       return resp.status(409).json({ message: "Movie already exists." });
     }
   } catch (error) {
@@ -58,18 +59,22 @@ const ensureMovieIdExist = async (
   resp: Response,
   next: NextFunction
 ) => {
-  const idMovie: number = parseInt(req.params.id);
+  try {
+    const idMovie: number = parseInt(req.params.id);
 
-  const queryString = await client.query(
-    `
-      select * from movies 
-      where movies.id = $1;
-      `,
-    [idMovie]
-  );
+    const queryResult = await client.query(
+      `
+        select * from movies 
+        where movies.id = $1;
+        `,
+      [idMovie]
+    );
 
-  if (!queryString.rows[0]) {
-    return resp.status(404).json({ message: "Movie not found." });
+    if (!queryResult.rows[0]) {
+      return resp.status(404).json({ message: "Movie not found." });
+    }
+  } catch (error) {
+    console.log(error);
   }
 
   return next();

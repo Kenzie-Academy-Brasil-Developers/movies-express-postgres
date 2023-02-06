@@ -14,4 +14,4 @@ interface iMovieId extends iMovie {
 type iListMovies = QueryResult<iMovie>;
 type irequeridKeys = "name" | "description" | "duration" | "price";
 
-export { iMovie, iListMovies, iMovieId, irequeridKeys};
+export { iMovie, iListMovies, iMovieId, irequeridKeys };
