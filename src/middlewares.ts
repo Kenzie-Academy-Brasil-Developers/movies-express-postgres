@@ -38,8 +38,9 @@ const ensureMovieNameExist = async (
     const nameMovie: string = req.body.name;
     const queryResult = await client.query(
       `
-    select * from movies 
-    where movies.name = $1;
+        SELECT * FROM "movies" 
+        WHERE
+           movies.name = $1;
     `,
       [nameMovie]
     );
@@ -64,8 +65,9 @@ const ensureMovieIdExist = async (
 
     const queryResult = await client.query(
       `
-        select * from movies 
-        where movies.id = $1;
+        SELECT * FROM "movies" 
+        WHERE
+           movies.id = $1;
         `,
       [idMovie]
     );

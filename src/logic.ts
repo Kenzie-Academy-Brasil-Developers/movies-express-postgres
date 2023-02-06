@@ -8,11 +8,11 @@ const createMovie = async (req: Request, resp: Response): Promise<Response> => {
   const newMovie: iMovie = req.body;
 
   const queryString: string = `
-    insert into
-    movies(name, description, duration, price)
-    values
+    INSERT INTO
+    "movies" ("name", "description", "duration", "price")
+    VALUES
     ($1, $2, $3, $4)
-    returning *;
+    RETURNING *;
   `;
 
   const queryConfig: QueryConfig = {
@@ -77,14 +77,14 @@ const updateMovie = async (req: Request, resp: Response): Promise<Response> => {
   const valuesMovie = Object.values(newMovie);
 
   const queryString: string = `
-    update movies set
-    name = $1,
-    description = $2,
-    duration = $3,
-    price = $4
-    where 
-    id = $5
-    returning*;
+    UPDATE "movies" SET
+         name = $1,
+         description = $2,
+         duration = $3,
+         price = $4
+    WHERE
+        id = $5
+    RETURNING *;
   `;
 
   const queryConfig: QueryConfig = {
@@ -100,8 +100,9 @@ const updateMovie = async (req: Request, resp: Response): Promise<Response> => {
 const deleteMovie = async (req: Request, resp: Response): Promise<Response> => {
   const idMovie: number = parseInt(req.params.id);
   const queryString = `
-    delete from movies
-    where id = $1
+    DELETE FROM "movies"
+    WHERE 
+        id = $1
   `;
 
   const queryConfig: QueryConfig = {
