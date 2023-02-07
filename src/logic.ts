@@ -2,10 +2,10 @@ import { Request, Response } from "express";
 import { format } from "path";
 import { QueryConfig } from "pg";
 import { client } from "./database";
-import { iListMovies, iMovie } from "./interfaces";
+import { IListMovies, IMovie } from "./interfaces";
 
 const createMovie = async (req: Request, resp: Response): Promise<Response> => {
-  const newMovie: iMovie = req.body;
+  const newMovie: IMovie = req.body;
 
   const queryString: string = `
     INSERT INTO
@@ -20,7 +20,7 @@ const createMovie = async (req: Request, resp: Response): Promise<Response> => {
     values: Object.values(newMovie),
   };
 
-  const queryResult: iListMovies = await client.query(queryConfig);
+  const queryResult: IListMovies = await client.query(queryConfig);
 
   return resp.status(201).json(queryResult.rows[0]);
 };
@@ -31,7 +31,7 @@ const listMovies = async (req: Request, resp: Response): Promise<Response> => {
 
   if (
     (page <= 0 || typeof page !== "number") &&
-    (perPage < 0 || page > 5 || typeof perPage !== "number")
+    (perPage < 0 || perPage > 5 || typeof perPage !== "number")
   ) {
     page = 1;
     perPage = 5;
@@ -55,7 +55,7 @@ const listMovies = async (req: Request, resp: Response): Promise<Response> => {
     prevPage = null;
   }
 
-  const queryResult: iListMovies = await client.query(queryConfig);
+  const queryResult: IListMovies = await client.query(queryConfig);
   const data = queryResult.rows;
 
   if (data.length <= 0) {
@@ -72,7 +72,7 @@ const listMovies = async (req: Request, resp: Response): Promise<Response> => {
 };
 
 const updateMovie = async (req: Request, resp: Response): Promise<Response> => {
-  const newMovie: iMovie = req.body;
+  const newMovie: IMovie = req.body;
   const idMovie: number = parseInt(req.params.id);
   const valuesMovie = Object.values(newMovie);
 
@@ -92,7 +92,7 @@ const updateMovie = async (req: Request, resp: Response): Promise<Response> => {
     values: [...valuesMovie, idMovie],
   };
 
-  const queryResult: iListMovies = await client.query(queryConfig);
+  const queryResult: IListMovies = await client.query(queryConfig);
 
   return resp.status(200).json(queryResult.rows[0]);
 };

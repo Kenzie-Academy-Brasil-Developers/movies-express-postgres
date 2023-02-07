@@ -1,17 +1,17 @@
 import { QueryResult } from "pg";
 
-interface iMovie {
+interface IMovie {
   name: string;
   description: string;
   duration: number;
   price: number;
 }
 
-interface iMovieId extends iMovie {
+interface IMovieId extends IMovie {
   id: number;
 }
 
-type iListMovies = QueryResult<iMovie>;
-type irequeridKeys = "name" | "description" | "duration" | "price";
+type IListMovies = QueryResult<IMovie>;
+type IrequeridKeys = "name" | "description" | "duration" | "price";
 
-export { iMovie, iListMovies, iMovieId, irequeridKeys };
+export { IMovie, IListMovies, IMovieId, IrequeridKeys };

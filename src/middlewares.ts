@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { client } from "./database";
-import { irequeridKeys } from "./interfaces";
+import { IrequeridKeys } from "./interfaces";
 
 const validateBody = async (
   req: Request,
@@ -9,7 +9,7 @@ const validateBody = async (
 ) => {
   const keys: Array<string> = Object.keys(req.body);
 
-  const requiredKeys: Array<irequeridKeys> = [
+  const requiredKeys: Array<IrequeridKeys> = [
     "name",
     "description",
     "duration",
