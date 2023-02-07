@@ -26,14 +26,14 @@ const createMovie = async (req: Request, resp: Response): Promise<Response> => {
 };
 
 const listMovies = async (req: Request, resp: Response): Promise<Response> => {
-  let page = Number(req.query.page) || 1;
-  let perPage = Number(req.query.per_page) || 5;
+  let page: number = Number(req.query.page);
+  let perPage: number = Number(req.query.per_page);
 
-  if (
-    (page <= 0 || typeof page !== "number") &&
-    (perPage < 0 || perPage > 5 || typeof perPage !== "number")
-  ) {
+  if (page <= 0 || typeof page !== "number") {
     page = 1;
+  }
+  
+  if (perPage <= 0 || perPage > 5 || typeof perPage !== "number") {
     perPage = 5;
   }
 
