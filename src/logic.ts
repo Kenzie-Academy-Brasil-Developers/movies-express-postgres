@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { format } from "path";
 import { QueryConfig } from "pg";
 import { client } from "./database";
@@ -32,7 +32,7 @@ const listMovies = async (req: Request, resp: Response): Promise<Response> => {
   if (page <= 0 || typeof page !== "number") {
     page = 1;
   }
-  
+
   if (perPage <= 0 || perPage > 5 || typeof perPage !== "number") {
     perPage = 5;
   }
