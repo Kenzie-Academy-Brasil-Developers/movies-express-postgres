@@ -82,7 +82,4 @@ const ensureMovieIdExist = async (
   return next();
 };
 
-
-
-
 export { ensureMovieNameExist, ensureMovieIdExist, validateBody };
