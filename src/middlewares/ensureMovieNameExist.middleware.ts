@@ -1,26 +1,26 @@
 import { NextFunction, Request, Response } from "express";
+import { AppError } from "../errors";
 
 const ensureMovieNameExist = async (
   req: Request,
   resp: Response,
   next: NextFunction
 ) => {
-  try {
-    const nameMovie: string = req.body.name;
-    const queryResult = await client.query(
-      `
+  const nameMovie: string = req.body.name;
+  const queryResult = await client.query(
+    `
           SELECT * FROM "movies" 
           WHERE
              movies.name = $1;
       `,
-      [nameMovie]
-    );
+    [nameMovie]
+  );
 
-    if (queryResult.rows[0] !== undefined) {
-      return resp.status(409).json({ message: "Movie already exists." });
-    }
-  } catch (error) {
-    console.log(error);
+  const nameExistsResult = await client.query(queryResult);
+  const nameExists = nameExistsResult.rows[0].exists;
+
+  if (nameExists) {
+    throw new AppError("Name already registered", 409);
   }
 
   return next();
