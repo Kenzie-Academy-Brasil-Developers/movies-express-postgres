@@ -1,16 +1,23 @@
 import { Router } from "express";
-import { createMoviesController } from "../controllers/movies.controllers";
+import {
+  createMoviesController,
+  listMoviesController,
+  updateMovieController,
+  deleteMovieController,
+} from "../controllers/movies.controllers";
+import ensureMovieIdExist from "../middlewares/ensureMovieIdExist.middleware";
+import ensureMovieNameExist from "../middlewares/ensureMovieNameExist.middleware";
 
 const moviesRoutes: Router = Router();
 
-moviesRoutes.post("/movies", createMoviesController);
-moviesRoutes.get("/movies");
-moviesRoutes.patch("/movies/:id");
-moviesRoutes.delete("/movies/:id");
-
-// moviesRoutes.post("/movies", ensureMovieNameExist, createMoviesController);
-// moviesRoutes.get("/movies", listMovies);
-// moviesRoutes.patch("/movies/:id", ensureMovieIdExist, ensureMovieNameExist, updateMovie);
-// moviesRoutes.delete("/movies/:id", ensureMovieIdExist, deleteMovie);
+moviesRoutes.post("/movies", ensureMovieNameExist, createMoviesController);
+moviesRoutes.get("/movies", listMoviesController);
+moviesRoutes.patch(
+  "/movies/:id",
+  ensureMovieIdExist,
+  ensureMovieNameExist,
+  updateMovieController
+);
+moviesRoutes.delete("/movies/:id", ensureMovieIdExist, deleteMovieController);
 
 export default moviesRoutes;
