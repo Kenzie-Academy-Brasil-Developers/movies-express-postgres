@@ -5,7 +5,7 @@ import { client } from "./database";
 import { IListMovies, IMovie } from "./interfaces";
 
 const createMovie = async (req: Request, resp: Response): Promise<Response> => {
-  const newMovie: IMovie = req.body;
+  const { name, description, duration, price } = req.body;
 
   const queryString: string = `
     INSERT INTO
@@ -17,7 +17,7 @@ const createMovie = async (req: Request, resp: Response): Promise<Response> => {
 
   const queryConfig: QueryConfig = {
     text: queryString,
-    values: Object.values(newMovie),
+    values: [name, description, duration, price],
   };
 
   const queryResult: IListMovies = await client.query(queryConfig);
@@ -28,6 +28,11 @@ const createMovie = async (req: Request, resp: Response): Promise<Response> => {
 const listMovies = async (req: Request, resp: Response): Promise<Response> => {
   let page: number = Number(req.query.page);
   let perPage: number = Number(req.query.per_page);
+  let sort: any = req.query.sort;
+  let order: any = req. query.order;
+console.log(sort);
+console.log(order);
+
 
   if (page <= 0 || typeof page !== "number") {
     page = 1;
@@ -39,12 +44,13 @@ const listMovies = async (req: Request, resp: Response): Promise<Response> => {
 
   const queryString: string = `
      SELECT * FROM movies
-     OFFSET $1 LIMIT $2;
+     ORDER BY $1 $2
+     OFFSET $3 LIMIT $4;
     `;
 
   const queryConfig: QueryConfig = {
     text: queryString,
-    values: [perPage * (page - 1), perPage],
+    values: [sort, order, perPage * (page - 1), perPage],
   };
 
   const baseUrl: string = "http://localhost:3000/movies";

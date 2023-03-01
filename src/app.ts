@@ -1,18 +1,12 @@
 import express, { Application } from "express";
-
-import { startDataBase } from "./database";
-import { createMovie, deleteMovie, listMovies, updateMovie } from "./logic";
-import { ensureMovieIdExist, ensureMovieNameExist } from "./middlewares";
+import { handleErrors } from "./errors";
+import moviesRoutes from "./routers/movies.routers";
 
 const app: Application = express();
 app.use(express.json());
 
-app.post("/movies", ensureMovieNameExist, createMovie);
-app.get("/movies", listMovies);
-app.patch("/movies/:id", ensureMovieIdExist, ensureMovieNameExist, updateMovie);
-app.delete("/movies/:id", ensureMovieIdExist, deleteMovie);
+app.use("/login", moviesRoutes);
 
-app.listen(3000, async () => {
-  await startDataBase();
-  console.log("Server is running");
-});
+app.use(handleErrors);
+
+export default app;
