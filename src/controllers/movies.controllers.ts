@@ -18,7 +18,7 @@ const listMoviesController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const Movies = await listMoviesService();
+  const Movies = await listMoviesService(req.query);
 
   return res.json(Movies);
 };
