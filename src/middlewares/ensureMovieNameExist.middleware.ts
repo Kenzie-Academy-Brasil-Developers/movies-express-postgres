@@ -1,26 +1,25 @@
 import { NextFunction, Request, Response } from "express";
+import { Repository } from "typeorm";
+import { AppDataSource } from "../data-source";
+import { Movie } from "../entities/movies.entity";
 import { AppError } from "../errors";
+
 
 const ensureMovieNameExist = async (
   req: Request,
   resp: Response,
   next: NextFunction
-) => {
-  const nameMovie: string = req.body.name;
-  const queryResult = await client.query(
-    `
-          SELECT * FROM "movies" 
-          WHERE
-             movies.name = $1;
-      `,
-    [nameMovie]
-  );
+): Promise<void> => {
+  const movieRepository: Repository<Movie> = AppDataSource.getRepository(Movie);
 
-  const nameExistsResult = await client.query(queryResult);
-  const nameExists = nameExistsResult.rows[0].exists;
+  const findMovieName = await movieRepository.findOne({
+    where: {
+      name: req.body.name,
+    },
+  });
 
-  if (nameExists) {
-    throw new AppError("Name already registered", 409);
+  if (findMovieName) {
+    throw new AppError("Name already registered", 404);
   }
 
   return next();

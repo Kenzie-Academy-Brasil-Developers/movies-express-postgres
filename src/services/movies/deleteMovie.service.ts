@@ -1,21 +1,15 @@
-import { QueryConfig } from "pg";
+import { Repository } from "typeorm";
+import { AppDataSource } from "../../data-source";
+import { Movie } from "../../entities/movies.entity";
 
 const deleteMovieService = async (movieId: number): Promise<void> => {
-  const queryString: string = `
-    UPDATE
-        users
-    SET
-        "active" = false
-    WHERE
-        id = $1;
-`;
-
-  const queryConfig: QueryConfig = {
-    text: queryString,
-    values: [movieId],
-  };
-
-  await client.query(queryConfig);
+  const movieRepository: Repository<Movie> = AppDataSource.getRepository(Movie);
+  const movie = await movieRepository.findOne({
+    where: {
+      id: movieId,
+    },
+  });
+  await movieRepository.remove(movie!);
 };
 
 export default deleteMovieService;

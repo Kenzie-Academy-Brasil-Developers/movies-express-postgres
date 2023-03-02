@@ -1,59 +1,29 @@
-import format from "pg-format";
-import { client } from "../../database";
-import { AppError } from "../../errors";
-import { IUserWithoutPassword } from "../../interfaces/users.interfaces";
-import { returnUserSchemaWithoutPassword, updateUserSchema } from "../../schemas/users.schemas";
-import "express-async-errors";
+import { Repository } from "typeorm";
+import { AppDataSource } from "../../data-source";
+import { Movie } from "../../entities/movies.entity";
+import { IMovieReturn, IMovieUpdate } from "../../interfaces/movies.interfaces";
+import { returnMovieSchema } from "../../schemas/movies.schemas";
 
 const updatemovieService = async (
-  movieId: number,
-  reqBody: any
-): Promise<any> => {
-  if (Object.keys(reqBody).length === 0) {
-    throw new AppError("Expected keys: name, email, password");
-  }
+  newMovieData: IMovieUpdate,
+  idUser: number
+): Promise<IMovieReturn> => {
+  const movieRepository: Repository<Movie> = AppDataSource.getRepository(Movie);
 
-  const updateParams = reqBody;
+  const oldUserData = await movieRepository.findOneBy({
+    id: idUser,
+  });
 
-  const updateSet = Object.entries(updateParams)
-    .filter(([key, value]) => value !== undefined)
-    .map(([key, value]) => format(`${key} = %L`, value))
-    .join(", ");
+  const user = movieRepository.create({
+    ...oldUserData,
+    ...newMovieData,
+  });
 
-  let query;
+  await movieRepository.save(user);
 
-  if (Object.keys(reqBody).length === 1) {
-    const [key, value] = Object.entries(updateParams)[0];
-    query = format(
-      `
-        UPDATE movies 
-        SET ${format(`${key} = %L`, value)} 
-        WHERE id = %L`,
-      [movieId]
-    );
-  } else {
-    query = format(
-      `
-        UPDATE movies 
-        SET ${updateSet} 
-        WHERE id = %L`,
-      [movieId]
-    );
-  }
+  const updatedUser = returnMovieSchema.parse(user);
 
-  await client.query(query);
-
-  const queryResult = await client.query(
-    format(
-      `
-        SELECT *
-        FROM movies 
-        WHERE id = %L`,
-      [movieId]
-    )
-  );
-  const movie = queryResult.rows[0]
-  return movie;
+  return updatedUser;
 };
 
 export default updatemovieService;

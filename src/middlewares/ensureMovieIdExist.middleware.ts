@@ -1,26 +1,23 @@
 import { NextFunction, Request, Response } from "express";
-import { QueryResult } from "typeorm";
+import { Repository } from "typeorm";
+import { AppDataSource } from "../data-source";
+import { Movie } from "../entities/movies.entity";
 import { AppError } from "../errors";
 
 const ensureMovieIdExist = async (
   req: Request,
   resp: Response,
   next: NextFunction
-) => {
-  const idMovie: number = parseInt(req.params.id);
+): Promise<void> => {
+  const movieRepository: Repository<Movie> = AppDataSource.getRepository(Movie);
 
-  const queryResult = await client.query(
-    `
-          SELECT * FROM "movies" 
-          WHERE
-             movies.id = $1;
-          `,
-    [idMovie]
-  );
+  const findMovie = await movieRepository.findOne({
+    where: {
+      id: parseInt(req.params.id),
+    },
+  });
 
-  const queryResult: QueryResult = await client.query(queryStringUserExists);
-
-  if (queryResult.rowCount === 0) {
+  if (!findMovie) {
     throw new AppError("Movie not found", 404);
   }
 

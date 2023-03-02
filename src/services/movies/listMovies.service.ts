@@ -1,20 +1,17 @@
-import { format } from "path";
-import { QueryResult } from "pg";
-import { IMovieRequest } from "../../interfaces/movies.interfaces";
+import { Repository } from "typeorm";
+import { AppDataSource } from "../../data-source";
+import { Movie } from "../../entities/movies.entity";
+import { IAllMoviesReturn } from "../../interfaces/movies.interfaces";
+import { returnAllMoviesSchema } from "../../schemas/movies.schemas";
 
-const listMoviesService = async (): Promise<IMovieRequest[]> => {
-  const query: string = format(
-    `
-    SELECT
-    "id","name","email","admin","active"
-    FROM
-        users;
-    `
-  );
+const listMoviesService = async (): Promise<IAllMoviesReturn> => {
+  const movieRepository: Repository<Movie> = AppDataSource.getRepository(Movie);
 
-  const queryResult: QueryResult = await client.query(query);
+  const findMovies: Array<Movie> = await movieRepository.find();
 
-  return queryResult.rows;
+  const movies: IAllMoviesReturn = returnAllMoviesSchema.parse(findMovies);
+
+  return movies;
 };
 
 export default listMoviesService;

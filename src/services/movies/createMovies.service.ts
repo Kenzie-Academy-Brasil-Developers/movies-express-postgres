@@ -1,25 +1,24 @@
-import { QueryConfig } from "pg";
-import { IMovie, IMovieRequest } from "../../interfaces/movies.interfaces";
+import {
+  IMovieReturn,
+  IMovieRequest,
+} from "../../interfaces/movies.interfaces";
+import { AppDataSource } from "../../data-source";
+import { Repository } from "typeorm";
+import { Movie } from "../../entities/movies.entity";
+import { returnMovieSchema } from "../../schemas/movies.schemas";
 
-const createMovieService = async (movieData: IMovie): Promise<IMovieRequest> => {
-  const { name, description, duration, price } = req.body;
+const createMovieService = async (
+  movieData: IMovieRequest
+): Promise<IMovieReturn> => {
+  const movieRepository: Repository<Movie> = AppDataSource.getRepository(Movie);
 
-  const queryString: string = `
-    INSERT INTO
-    "movies" ("name", "description", "duration", "price")
-    VALUES
-    ($1, $2, $3, $4)
-    RETURNING *;
-  `;
+  const movie: Movie = movieRepository.create(movieData);
 
-  const queryConfig: QueryConfig = {
-    text: queryString,
-    values: [name, description, duration, price],
-  };
+  await movieRepository.save(movie);
 
-  const queryResult: IMovieRequest = await client.query(queryConfig);
+  const newMovie: IMovieReturn = returnMovieSchema.parse(movie);
 
-  return resp.status(201).json(queryResult.rows[0]);
+  return newMovie;
 };
 
 export default createMovieService;
