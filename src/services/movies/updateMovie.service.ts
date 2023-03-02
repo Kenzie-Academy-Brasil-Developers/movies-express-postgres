@@ -4,26 +4,26 @@ import { Movie } from "../../entities/movies.entity";
 import { IMovieReturn, IMovieUpdate } from "../../interfaces/movies.interfaces";
 import { returnMovieSchema } from "../../schemas/movies.schemas";
 
-const updatemovieService = async (
+const updateMovieService = async (
   newMovieData: IMovieUpdate,
-  idUser: number
+  movieId: number
 ): Promise<IMovieReturn> => {
   const movieRepository: Repository<Movie> = AppDataSource.getRepository(Movie);
 
-  const oldUserData = await movieRepository.findOneBy({
-    id: idUser,
+  const oldMovieData = await movieRepository.findOneBy({
+    id: movieId,
   });
 
-  const user = movieRepository.create({
-    ...oldUserData,
+  const movie = movieRepository.create({
+    ...oldMovieData,
     ...newMovieData,
   });
 
-  await movieRepository.save(user);
+  await movieRepository.save(movie);
 
-  const updatedUser = returnMovieSchema.parse(user);
+  const updatedMovie = returnMovieSchema.parse(movie);
 
-  return updatedUser;
+  return updatedMovie;
 };
 
-export default updatemovieService;
+export default updateMovieService;

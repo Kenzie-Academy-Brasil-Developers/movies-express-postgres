@@ -3,6 +3,7 @@ import { Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { Movie } from "../entities/movies.entity";
 import { AppError } from "../errors";
+import "express-async-errors";
 
 const ensureMovieIdExist = async (
   req: Request,
@@ -11,10 +12,8 @@ const ensureMovieIdExist = async (
 ): Promise<void> => {
   const movieRepository: Repository<Movie> = AppDataSource.getRepository(Movie);
 
-  const findMovie = await movieRepository.findOne({
-    where: {
-      id: parseInt(req.params.id),
-    },
+  const findMovie = await movieRepository.findOneBy({
+    id: parseInt(req.params.id),
   });
 
   if (!findMovie) {

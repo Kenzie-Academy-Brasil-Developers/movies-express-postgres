@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, Check } from "typeorm";
 
 @Entity("movies")
+@Check(`"duration" > 0 and "price" > 0`)
 class Movie {
   @PrimaryGeneratedColumn("increment")
   id: number;
@@ -9,7 +10,7 @@ class Movie {
   name: string;
 
   @Column({ type: "text", nullable: true })
-  description: string | undefined;
+  description: string | null | undefined;
 
   @Column({ type: "int", nullable: false })
   duration: number;

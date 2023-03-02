@@ -3,7 +3,7 @@ import { Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { Movie } from "../entities/movies.entity";
 import { AppError } from "../errors";
-
+import "express-async-errors";
 
 const ensureMovieNameExist = async (
   req: Request,
@@ -12,10 +12,8 @@ const ensureMovieNameExist = async (
 ): Promise<void> => {
   const movieRepository: Repository<Movie> = AppDataSource.getRepository(Movie);
 
-  const findMovieName = await movieRepository.findOne({
-    where: {
-      name: req.body.name,
-    },
+  const findMovieName = await movieRepository.findOneBy({
+    name: req.body.name,
   });
 
   if (findMovieName) {

@@ -2,9 +2,8 @@ import { Request, Response } from "express";
 import { IMovieRequest, IMovieUpdate } from "../interfaces/movies.interfaces";
 import createMovieService from "../services/movies/createMovies.service";
 import listMoviesService from "../services/movies/listMovies.service";
-// import updatemovieService from "../services/movies/updateMovie.service";
+import updateMovieService from "../services/movies/updateMovie.service";
 import deleteMovieService from "../services/movies/deleteMovie.service";
-import updatemovieService from "../services/movies/updateMovie.service";
 
 const createMoviesController = async (
   req: Request,
@@ -28,7 +27,7 @@ const updateMovieController = async (req: Request, res: Response) => {
   const userData: IMovieUpdate = req.body;
   const movieId = parseInt(req.params.id);
 
-  const updatedMovie = await updatemovieService(userData, movieId);
+  const updatedMovie = await updateMovieService(userData, movieId);
 
   return res.json(updatedMovie);
 };
